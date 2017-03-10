@@ -16,6 +16,14 @@ class ComposerStaticInit9a735e6aa8e7de6171ce2841f2582df3
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\HttpFoundation\\' => 33,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
+        'D' => 
+        array (
+            'Dotenv\\' => 7,
+        ),
         'A' => 
         array (
             'App\\' => 4,
@@ -30,6 +38,14 @@ class ComposerStaticInit9a735e6aa8e7de6171ce2841f2582df3
         'Symfony\\Component\\HttpFoundation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
         'App\\' => 
         array (

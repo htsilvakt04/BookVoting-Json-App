@@ -1,9 +1,11 @@
 {
-    "name": "bretterer/php-auth",
-    "description": "PHP User Authentication Treehouse Course",
+    "name": "php-auth",
+    "description": "PHP User Authentication Silva's course",
     "type": "project",
     "require": {
-        "symfony/http-foundation": "3.1.6"
+        "symfony/http-foundation": "3.1.6",
+        "firebase/php-jwt": "^4.0",
+        "vlucas/phpdotenv": "^2.4"
     },
     "autoload": {
         "psr-4": {
@@ -11,10 +13,5 @@
         }
     },
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Brian Retterer",
-            "email": "brian@brianretterer.com"
-        }
-    ]
+    
 }
