@@ -10,10 +10,10 @@ $bookDescription = request()->get("description");
 try {
 	updateBook($bookId,$bookTitle, $bookDescription);
 
-	response("/books.php", "Your book were updated successfully", Response::HTTP_FOUND);
+	response("/books.php");
 } catch (Exception $e) {
 
-	response("/edit.php", "Can't edit book..", Response::HTTP_BAD_REQUEST);
+	response("/edit.php");
 
 	return $e;
 }

@@ -1,5 +1,7 @@
 <?php 
 
+use Firebase\JWT\JWT;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 /**
@@ -26,8 +28,13 @@ function addBook($title, $des)
 		throw $e;
 	}
 }
-function response($path, $content = "success", $type = Response::HTTP_OK) {
-	$response = Response::create($content, $type, ["Location" => $path]);
+function response($path, $extra = []) {
+	$response = Response::create(null, Response::HTTP_FOUND, ["Location" => $path]);
+	if (array_key_exists("cookies", $extra)) {
+		foreach ($extra["cookies"] as $cookie) {
+			$response->headers->setCookie($cookie);
+		}
+	}
 	$response->send();
 	exit;
 }
@@ -160,4 +167,32 @@ function createUser($email, $hash)
 	} catch (Exception $e) {
 		throw $e;
 	}
+}
+function isAuthenticated() 
+{
+	$token = request()->cookies->get("access_token");
+
+	if (! request()->cookies->has("access_token")) {
+		return false;
+	}
+
+	try {
+		JWT::$leeway = 10;
+		$decode = JWT::decode($token, getenv("SECRET_KEY"), ["HS256"]);
+		return true;
+	} catch (Exception $e) {
+		return false;
+	}
+
+}
+
+function requireAuth() 
+{
+	if (! isAuthenticated()) {
+		$exp = time() - 3600;
+		$access_token = new Cookie("access_token", "Expired", $exp, "/", getenv("COOKIE_DOMAIN"));
+		response("/login.php", ["cookies" => [$access_token]]);
+	}
+
+	//loginUsingId($decode["user_id"]);
 }

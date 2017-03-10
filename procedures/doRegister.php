@@ -8,17 +8,13 @@ $confirmPassword = request()->get("confirm_password");
 
 if ($password != $confirmPassword) {
 	return response(
-		"/register.php",
-		"Password doesn't match",
-		 Response::HTTP_BAD_REQUEST
+		"/register.php"
 	);
 }
 
 if(! empty($user = findUserByEmail($email))) {
 	return response(
-		"/register.php",
-		"Email already exists",
-		 Response::HTTP_BAD_REQUEST
+		"/register.php"
 	);
 }
 

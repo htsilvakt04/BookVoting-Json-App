@@ -11,10 +11,10 @@ $bookDescription = request()->get("description");
 try {
 	$newBook = addBook($bookTitle, $bookDescription);
 
-	response("/books.php", "Your book were created successfully", Response::HTTP_FOUND);
+	response("/books.php");
 } catch (Exception $e) {
 
-	response("/add.php", "Can't add book..", Response::HTTP_BAD_REQUEST);
+	response("/add.php");
 
 	return $e;
 }
