@@ -12,6 +12,21 @@ function request()
     return Request::createFromGlobals();
 }
 
+function getAllUsers() 
+{
+	global $db;
+
+	try {
+		$query = "SELECT * FROM users";
+		$stmt = $db->prepare($query);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	} catch (Exception $e) {
+		throw $e;
+	}
+}
+
+
 function addBook($title, $des)
 {
 	global $db;
