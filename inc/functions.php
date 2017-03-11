@@ -300,7 +300,57 @@ function old()
 	}
 }
 
+function requireAdmin() 
+{
+	if (! isAuthenticated()) {
+		$exp = time() - 3600;
+		$access_token = new Cookie("access_token", "Expired", $exp, "/", getenv("COOKIE_DOMAIN"));
+		response("/login.php", ["cookies" => [$access_token]]);
+	}
+	// check if the user's token is admin.
+	try {
+		if (! decodeJwt("is_admin")) {
+		$session->getFlashBag()->add("messages", "You do not have permission to access this page");
+		response("/login.php");
+		}
+	} catch (Exception $e) {
+		$access_token = new Cookie("access_token", "Expired", $exp, "/", getenv("COOKIE_DOMAIN"));
+		response("/login.php", ["cookies" => [$access_token]]);
+	}
+}
 
+function isAdmin() 
+{
+	if (! isAuthenticated()) {
+		return false;
+	}
+	try {
+		$isAdmin = decodeJwt("is_admin");
+	} catch (Exception $e) {
+		return false;
+	}
+
+	return (boolean) $isAdmin;
+}
+
+function isOwner($ownerId) 
+{
+	// this function have the main purpose is to check whether the book is owned by the particular user or not. if not, this user can't modify the book.
+	if (!isAuthenticated()) {
+		return false;
+	}
+
+	try {
+
+		$userId = decodeJwt("sub");
+
+	} catch (Exception $e) {
+		throw $e;
+	}
+
+	return $ownerId == $userId;
+
+}
 
 
 
