@@ -11,11 +11,16 @@ $emailRequest = request()->get("email");
 $passwordRequest = request()->get("password");
 
 if (empty($user = findUserByEmail($emailRequest))) {
+	$session->getFlashBag()->add("messages", "User was not found");
+	$session->getFlashBag()->add("old", [$emailRequest]);
+
 	response("/login.php", "Your crudential doesn't match, please try again");
 }
 
 
 if(!password_verify($passwordRequest, $user["password"])) {
+	$session->getFlashBag()->add("messages", "Your password doesn't match, try again");
+	$session->getFlashBag()->add("old", [$emailRequest]);
 	response("/login.php", "Your crudential doesn't match, please try again");
 }
 

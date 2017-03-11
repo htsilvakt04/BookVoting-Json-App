@@ -152,6 +152,44 @@ function findUserByEmail($email)
 		throw $e;
 	}
 }
+
+function findUser($id) 
+{
+	global $db;
+	try {
+		$query = "SELECT * FROM users WHERE id = :id";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(":id", $id);
+	 	$stmt->execute();	
+	 	return $stmt->fetch(PDO::FETCH_ASSOC);
+	} catch (Exception $e) {
+		throw $e;
+	}
+}
+
+function findUserByAccessToken() 
+{
+	global $db;
+
+	try {
+		$userId = decodeJwt("sub");
+	} catch (Exception $e) {
+		throw $e;
+	}
+
+	try {
+		$query = "SELECT * FROM users WHERE id = :id";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(":id", $userId);
+	 	$stmt->execute();	
+	 	return $stmt->fetch(PDO::FETCH_ASSOC);
+	} catch (Exception $e) {
+		throw $e;
+	}
+
+}
+
+
 function createUser($email, $hash) 
 {
 	global $db;
@@ -170,21 +208,34 @@ function createUser($email, $hash)
 }
 function isAuthenticated() 
 {
-	$token = request()->cookies->get("access_token");
-
+	// check if the user have the access_token avaiable or not
+	
 	if (! request()->cookies->has("access_token")) {
 		return false;
 	}
 
 	try {
-		JWT::$leeway = 10;
-		$decode = JWT::decode($token, getenv("SECRET_KEY"), ["HS256"]);
+		decodeJwt();
 		return true;
 	} catch (Exception $e) {
 		return false;
 	}
 
 }
+
+
+function decodeJwt($prop = null) 
+{
+	JWT::$leeway = 10;
+	$token = request()->cookies->get("access_token");
+	$decode = JWT::decode($token, getenv("SECRET_KEY"), ["HS256"]);
+	if (func_num_args() == 0) {
+		return $decode;
+	}
+	return $decode->{$prop}; 
+	
+}
+
 
 function requireAuth() 
 {
@@ -196,3 +247,65 @@ function requireAuth()
 
 	//loginUsingId($decode["user_id"]);
 }
+
+function display_message($type = null) 
+{
+	global $session;
+
+	if (! $session->getFlashBag()->has("messages")) {
+		return;
+	}
+
+	$messages = $session->getFlashBag()->get("messages");
+
+	$div = "<div class='alert alert-danger alert-dismissable'>";
+
+	if ($type == "success") {
+		$div = '<div class="alert alert-success alert-dismissable">';
+	}
+	foreach ($messages as $message) {
+		$div .= "{$message}<br />";
+	}
+	$div .= "</div>";
+
+	return $div;
+
+}
+
+function updatePassword($password, $userId) 
+{
+	global $db;
+	$password = password_hash($password, PASSWORD_DEFAULT);
+	try {
+		$query = "UPDATE users SET password = :password WHERE id = :id";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(":password", $password);
+		$stmt->bindParam(":id", $userId);
+	 	$stmt->execute();
+
+	 	return true;
+	} catch (Exception $e) {
+		return false;
+	}
+}
+
+function old() 
+{
+	global $session;
+
+	if ($session->getFlashBag()->has("old")) {
+		foreach ($session->getFlashBag()->get("old") as $item) {
+			return $item[0];
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
