@@ -27,6 +27,9 @@
                     <li><a href="/procedures/doLogout.php">Logout</a></li>
                     <li><a href="/account.php">Account</a></li>
                 <?php endif ?>
+                <?php if(isAdmin()): ?>
+                    <li><a href="/admin.php">Admin</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

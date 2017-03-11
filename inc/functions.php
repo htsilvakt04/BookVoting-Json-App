@@ -304,6 +304,35 @@ function updatePassword($password, $userId)
 	}
 }
 
+function promote($id) 
+{
+	global $db;
+	try {
+		$query = "UPDATE users SET role_id = 1 WHERE id = :id";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(":id", $id,PDO::PARAM_INT);
+	 	$stmt->execute();
+
+	 	return true;
+	} catch (Exception $e) {
+		throw $e;
+	}
+}
+function demote($id) 
+{
+	global $db;
+	try {
+		$query = "UPDATE users SET role_id = 2 WHERE id = :id";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(":id", $id,PDO::PARAM_INT);
+	 	$stmt->execute();
+	 	
+	 	return true;
+	} catch (Exception $e) {
+		throw $e;
+	}
+}
+
 function old() 
 {
 	global $session;
@@ -317,6 +346,8 @@ function old()
 
 function requireAdmin() 
 {
+	global $session;
+
 	if (! isAuthenticated()) {
 		$exp = time() - 3600;
 		$access_token = new Cookie("access_token", "Expired", $exp, "/", getenv("COOKIE_DOMAIN"));
@@ -326,7 +357,7 @@ function requireAdmin()
 	try {
 		if (! decodeJwt("is_admin")) {
 		$session->getFlashBag()->add("messages", "You do not have permission to access this page");
-		response("/login.php");
+		response("/");
 		}
 	} catch (Exception $e) {
 		$access_token = new Cookie("access_token", "Expired", $exp, "/", getenv("COOKIE_DOMAIN"));
@@ -348,7 +379,7 @@ function isAdmin()
 	return (boolean) $isAdmin;
 }
 
-function isOwner($ownerId) 
+function isOwner($bookOwnerId) 
 {
 	// this function have the main purpose is to check whether the book is owned by the particular user or not. if not, this user can't modify the book.
 	if (!isAuthenticated()) {
