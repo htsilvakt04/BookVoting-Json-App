@@ -12,13 +12,11 @@ try {
 
 	deleteBook($bookId);
 
-	response(
-		"/books.php", 
-	);
+	response("/books.php");
 } catch (Exception $e) {
 
 	response(
-		"/procedures/deleteBook.php",
+		"/procedures/deleteBook.php"
 	);
 
 	return $e;

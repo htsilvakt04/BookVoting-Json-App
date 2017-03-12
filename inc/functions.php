@@ -30,7 +30,9 @@ function getAllUsers()
 function addBook($title, $des)
 {
 	global $db;
-	$ownerId = 0;
+
+	$ownerId = findUserByAccessToken()["id"];
+
 	try {
 		$query = "INSERT INTO books (name, description, owner_id) VALUES (:name, :description, :owner_id)";
 		$stmt = $db->prepare($query);
@@ -139,21 +141,7 @@ function vote($type, $bookId)
 	}
 }
 
-function deleteBook($bookId)
-{
-	global $db;
 
-	try {
-		$query = "DELETE FROM books WHERE id = ?";
-		$stmt = $db->prepare($query);
-		$stmt->bindParam(1, $bookId);
-	 	$stmt->execute();	
-	 	return true;
-	} catch (Exception $e) {
-		throw $e;
-	}
-
-}
 function findUserByEmail($email) 
 {
 	global $db;
@@ -394,14 +382,25 @@ function isOwner($bookOwnerId)
 		throw $e;
 	}
 
-	return $ownerId == $userId;
+	return $bookOwnerId == $userId;
 
 }
 
 
 
 
+function deleteBook($bookId)
+{
+	global $db;
 
+	try {
+		$query = "DELETE FROM books WHERE id = ?";
+		$stmt = $db->prepare($query);
+		$stmt->bindParam(1, $bookId);
+	 	$stmt->execute();	
+	 	return true;
+	} catch (Exception $e) {
+		throw $e;
+	}
 
-
-
+}

@@ -8,11 +8,12 @@ $book = getBook($bookId);
 
 $bookOwnerId = $book["owner_id"];
 
+
 if (!isOwner($bookOwnerId) && !isAdmin()) {
 	$session->getFlashBag()->add("messages", "You don't have permission to access");
 	response("/books.php");
 }
-
+ 	
 ?>
 <div class="container">
     <div class="well">
